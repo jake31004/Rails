@@ -1,0 +1,20 @@
+1.-Crear una aplicación
+2.-Ingresar a la carpeta de esa aplicacion
+3.-Ejecutar el comando:
+		rails generate controller welcome index
+	Con este comando estamos generando un controlador que se llamará welcome y tendrá un método llamado index
+4.- Dentro de la carpeta app\controllers\concerns se creó un archivo llamado welcome_controller, como se puede ver, tiene una clase llamada WelcomeController que hereda de ApplicationController
+5.- Esta clase tiene un método llamado index
+6.- Este comando también generó una vista dentro de la carpeta views\welcome llamada index.html.erb
+7.- ir a la dirección localhost:3000/welcome/index
+8.- Modificar la vista con un "hola mundo"
+9.- Para modificar la dirección de inicio de nuestra página web, iremos a la carpeta config y dentro de ella al archivo routes
+10.- En este archivo se guardan todas las rutas que tendrá nuestra página web
+11.- Para que la vista welcome sea la vista principal, descomentamos la línea que dice:
+		root 'welcome#index'
+12.- Podemos crear otro controlador llamado bienvenido con el método accion1, con el comando:
+	rails generate controller bienvenido accion1
+13.- Para que este nuevo controlador sea la página principal, en el archivo routes.rb cambiar la línea root por:
+	root 'bienvenido#accion1'
+14.- Volver a poner 
+	root 'welcome#index'

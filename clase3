@@ -1,0 +1,23 @@
+Modelos
+
+Para crear un modelo utilizamos el sguiente comando:
+
+	rails generate model NombreModelo campo1 campo2 campoN
+
+El nombre del modelo tiene que estar en singular y en inglés porque Rails utiliza convenciones para que el framework pueda funcionar.
+
+Rails espera que el nombre del modelo empieze con mayúscula y esté en sigular para que el nombre de la tabla que cree lo ponga en plural. 
+
+Se utilizan nombres en inglés para que Rails facilmemte lo cambie al plural. En español se crean nombres "raros".
+
+Ejecutar:
+	
+	rails generate model Article title:string body:text visit_count:integer
+
+Los campos de nuestro modelo empiezan como:
+	nombre:tipoDeDato
+
+Cuando el tipo de dato es string, este se puede o no poner
+
+Dentro de la carpeta app\models se creó el archivo article.rb (con mínuscula), es este archivo está la clase del modelo que creamos llamada Article que hereda de la clase ActiveRecord para poder hacer las consultas más facilmente.
+

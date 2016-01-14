@@ -1,0 +1,48 @@
+En el archivo app\config\database.yml se guarda la configuracion de la base de datos. Por defecto rails utiliza sqlite3.
+
+Existen tres entornos de trabajo:
+	-El entorno de desarrollo (development) nos sirve para trabajar en la aplicación, creando los datos y guardandolos. Normalmente siempre trabajamos en el entorno de desarrollo. Creando aquí todos los elementos que van a ser necesarios para nuestra aplicación.
+	-El entorno de prueba (test), el cual sirve para hacer para realizar todas las prubas que requiramos en nuestra aplicación, en este entorno creamos datos "ficticios" que utilizaremos para ver si uestra aplicación funciona. Estos datos serán eliminados al salir de este entorno.
+	-El entorno de producción cuando ya está arriba del servidor
+
+Las migraciones se encuentran en la carpeta app\db\migrate.
+Las migraciones son archivos que nos ayudan a hacer modificaciones a las bases de datos, desde crear tablas, agregar campos, indices, etc.
+
+Como ya creamos un modelo, en el localhost:3000 aparecerá un error diciendo que nos falta hacer una migración. Para esto utilizamos el comando:
+	
+					rake db:migrate
+
+Este comando ejecuta las migraciones, ejecutando el método change de la migración. Como podemos ver, el método change de la migración CreateArticles realizará la acción de crear una tabla.
+
+Si observamos, el archivo development.sqlite3 antes de ejecutar el comando rake, está vacío, y después de ejecutar el comando, este archivo ya tiene información. Esta información es la tabla de la base de datos que ya fue creada.
+
+Si por alguna razón hubieramos tenido un error en la migración, podemos deshacer la migración que acabamos de ejecutar con el comando:
+					
+					rake db:rollback
+
+Este comando revierte la acción de la última migración que acabamos de ejecutar.Podemos ejecutar el comando rollback las veces que queramos para eliminar los cambios que le habíamos hecho a la base de datos.
+
+Volver a crear la table con rake db:migrate
+
+En el archivo app\migrate\schema.rb guarda el esquema de toda nuestra base de datos. Podemos observarlo y en este momento estará solamente la tabla articles con sus distintos campos.
+La tabla articles tiene los dos campos que nosotros habíamos agregado (title y body) y tiene otros tres campos:
+	 -visit_count que es un número para saber cuantas veces hemos usado esa tupla
+	 -created_at para saber cuando fue creada esa tupla
+	 -updated_at para saber cuando se modificó algún campo de esa tupla.
+
+Abrir la consola de rails con el comando
+		
+		rails console
+
+Ejecutar el comando 
+		
+		Article.all	#nombre_del_modelo.all
+
+Este comando mostrará todos los elementos que tiene la tabla articles. Devuelve un arreglo vacío porque no hay artículos.
+
+Ejecutar el comando
+
+		Article.find(1) #nombre_del_modelo.find(numero_id)
+
+Este comando buscará un elemento dentro de la tabla con el id 1. En este caso no regresará nada porque no hay un elemento con ese id.
+

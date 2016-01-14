@@ -1,0 +1,43 @@
+Las vistas en rails se guardan con la extensión:
+	.html.erb
+La extensión .erb nos sirve para poder utilizar el lenguaje Ruby dentro de las vistas.
+Para utlilizar Ruby usamos los siguientes símbolos:
+
+	<% %> Esta realiza acciones sin deplegar datos
+	<%= %> Realiza las acciones y despliega o imprime los datos.
+
+Ir a blog\app\views\bienvenido\accion1.html.erb
+
+En ese archivo poner el código siguiente:
+
+		<h1>Ejecutando código de Ruby</h1>
+
+		<h2>Sin el igual</h2>
+
+		<% [1,2,3,4,5].each do |num| %>
+			<p>Número: <%= num %></p>
+		<%end%>
+
+		<h2>Con el igual</h2>
+
+		<%= [1,2,3,4,5].each do |num| %>
+			<p>Número: <%= num %></p>
+		<%end%>
+
+		<p>El arreglo también se imprimió en la pantalla porque tenía en el boque de código un igual.</p>
+
+Para cargar los css tenemos que poner el archivo .css que descarguemos o creemos en la carpeta app\assets\stylesheets
+
+Descargar el css flexboxgrid
+
+Copiar el archivo flexboxgrid-6.3.0\dist\flexboxgrid.css
+
+Pegarlo en la carpeta app\assets\stylesheets
+
+Por default en el archivo application.css rails coloca el archivo require_tree, el cual añade todos los archivos que estén dentro de la carpeta stylesheets, para que nosotros no tengamos que agregarl los .css
+
+Recargar la pagina bienvenido/accion1 y ver su código fuente, en el se vera que ya está cargado el link de flexboxgrid
+
+Para agregar los javascripts se hace lo mismo, sólo que en la carpeta javascripts
+
+En esta carpeta, en el archivo application.js también hay un require_tree, para que nosotros no los tengamos que agregar
