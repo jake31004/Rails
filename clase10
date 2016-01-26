@@ -1,0 +1,92 @@
+Validaciones
+
+Las validaciones corresponden al modelo, Rails ya tiene varios métodos para validar varios parámetros.
+
+Poner el siguiente código en el módelo de article.rb
+
+			class Article < ActiveRecord::Base
+				validates :title, presence: true
+				validates :body, presence: true
+			end
+
+Este código servirá para validar que el título y el cuerpo del artículo tengan contenido, que no estén vacíos.
+
+Crear un artículo vacío y en la consola poner el comando:
+
+				Article.last
+
+Para obtener el último artículo creado.
+Podemos ver que este artículo no es el vacío, sino que es el último artíclo que habíamos creado anteriormente. El artículo vacío no se guardó.
+
+Modificar el método create del controlador de Articles:
+
+			#POST /articles
+			def create
+				@article = Article.new(title: params[:article][:title],body: params[:article][:body])
+
+				if @article.save
+					redirect_to @article
+				else
+					render :new
+				end
+
+			end
+
+Si el artículo se pudo guardar, entoces la página se redirigirá al artículo creado.
+Si no, vamos a recargar la vista de new.
+
+Para mostrarle al usuario los errores que cometió a la hora de meter los datos del artículo, tenemos que modificar la vista de new de la siguiente forma:
+
+Se agregó este código en la vista:
+
+				<%= form_for(@article) do |f| %>
+				<% @article.errors.full_messages.each do |message| %>
+					<div class = "be-red white top-space">
+						<%= message %>
+					</div>
+				<%end%>
+
+Código completo:
+
+				<div style="width:80%; margin:0 auto;">
+
+					<h1>Crear Artículo</h1>
+
+					<%= form_for(@article) do |f| %>
+					<% @article.errors.full_messages.each do |message| %>
+						<div class = "be-red white top-space">
+							<%= message %>
+						</div>
+					<%end%>
+					
+						<div class = "field">
+							<%= f.text_field :title, placeholder: "Título" , class: "form-control"%>
+						</div>
+						<div>
+							<%= f.text_area :body, placeholder: "Escribe aquí", style: "height: 250px;", class: "form-control" %>
+						</div>
+
+						<div class="field">
+							<%= f.submit "Guardar", class: "btn be-red white" %>
+						</div>
+					<% end %>
+					</div>
+
+Se agregó la clase top-space al estilo:
+
+					.top-space{
+						marigin-top: 1em;
+					}
+				
+Podemos establecer el tamaño mínimo del cuerpo de nuestro artículo:
+
+					validates :body, presence: true, length: {minimum: 20}
+
+O poner que el titulo del artículo sea único, que no se repita.
+
+					validates :title, presence: true,  uniqueness: true
+
+Para validar con expresiones regulares podemos poner la opción format:
+
+					validates :username, format: {with: /regexp/}
+

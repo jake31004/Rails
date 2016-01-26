@@ -1,0 +1,126 @@
+Mandar datos al controlador
+
+Para crear un nuevo dato en nuestra tabla articles, debemos crear un formulario donde el usuario ingrese sus datos. La ruta donde haremos esto sera:
+
+					/articles/new
+
+Esta ruta utiliza el método new
+
+Dicho esto, entonces tenemos que crear el método new en el controlador y la vista /views/articles/new.html.erb
+
+En el controlador:
+
+			#GET /articles/new
+			#Creamos un artículo
+			def new
+				@article = Article.new
+			end
+
+En la vista:
+
+			<%= form_for(@article) do |f| %>
+				<div class = "field">
+					<%= f.text_field :title, placeholder: "Título" %>
+				</div>
+				<div>
+					<%= f.text_area :body, placeholder: "Escribe aquí" %>
+				</div>
+			<% end %>
+
+El método form_for sirve para crear un formulario para el recurso que le pasemos como parámetro, en este caso el artículo.
+
+f.text_field recibe el símbolo del la columna title de la tabla de article y un Hash de opciones, en este caso placeholder para poner el texto dentro del text_field.
+
+f.text_area recibe el símbolo de la columna body de la tabla article y un Hash de opciones, en este caso placeholder para poner el texto dentro del text_area.
+
+Ir a la ruta y ver el formulario.
+
+Como se ve muy feo, mejorar el estilo.
+
+Al código de la vista se le agregó un div y la clase form-control para el text_field y text_area, de la siguiente forma:
+
+			<div style="width:80%; margin:0 auto;">
+
+				<h1>Crear Artículo</h1>
+
+				<%= form_for(@article) do |f| %>
+					<div class = "field">
+						<%= f.text_field :title, placeholder: "Título" , class: "form-control"%>
+					</div>
+					<div>
+						<%= f.text_area :body, placeholder: "Escribe aquí", style: "height: 250px;", class: "form-control" %>
+					</div>
+				<% end %>
+
+			</div>
+
+Y al style.scss se le agregó el código de la clase field y la clase form-control
+
+			/*Para el formulario de articles/new */
+			.field{
+				margin-top: 1em;
+			}
+
+			.form-control{
+				border: none;
+				border-bottom: 1px solid;
+				outline: none;
+				width: 100%;
+				display: block;
+				padding: 10px 0px;
+				font-size: 1.2em;
+			}
+
+Crear un boton para enviar los datos del formulario:
+
+En la vista new:
+
+			<div style="width:80%; margin:0 auto;">
+
+				<h1>Crear Artículo</h1>
+
+				<%= form_for(@article) do |f| %>
+					<div class = "field">
+						<%= f.text_field :title, placeholder: "Título" , class: "form-control"%>
+					</div>
+					<div>
+						<%= f.text_area :body, placeholder: "Escribe aquí", style: "height: 250px;", class: "form-control" %>
+					</div>
+
+					<div class="field">
+						<%= f.submit "Guardar", class: "btn" %>
+					</div>
+				<% end %>
+
+			</div>
+
+En el estilo:
+
+			.btn{
+				background-color: inherit;
+				border: none;
+				outline: none;
+				text-transform: uppercase;
+				cursor: pointer;
+				font-size: 1.2em;
+			}
+
+Si ingresamos algo a al formulario y le damos clic al boton guardar nos sale un error de que la acción create no está dentro del controlador. Tenemos que crear el método create dentro del controlador.
+
+			def create
+				@article = Article.new(title: params[:article][:title],body: params[:article][:body])
+			end
+
+Al método new se le pasa el campo de la tabla articles con su contenido. En este caso el campo title se le pasa el párametro que envía el formulario, utilizando el Hash params le pasamos el título de artículo
+Y al campo body le pasámos el body del artículo.
+
+Para guardar el artículo en la base de datos, utilizamos el método .save
+Y por últimos nos dirigimos al artículo creado, con el método redirect_to y la ruta a la que nos queremos dirigir, en este caso al artículo.
+
+			#POST /articles
+			def create
+				@article = Article.new(title: params[:article][:title],body: params[:article][:body])
+
+				@article.save
+				redirect_to @article
+			end

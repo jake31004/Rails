@@ -1,0 +1,85 @@
+ActiveRecord Básico
+
+El ActiveRecord nos permite utilizar las bases de datos como objetos. Así ya no tenemos la necesidad de usar sentencias SQL.
+
+No importa cual sea la base de datos, el código siempre es el mismo.
+
+.all
+
+Obtiene todos los registros de una tabla
+
+.find
+
+Encuentra un registro por id. Por default todas las tablas que se crean en Rails tienen el campo id, como llave primaria.
+
+.all.count
+
+Nos dice cuantos registros hay en una tabla
+
+					Article.all.count
+
+***Correr estos comandos en la consola para probarlos***
+
+.find_by
+
+Sirve para buscar un registro por otro campo que no sea el id.Solo regresa un elemento
+
+				Article.find_by(title: "Segundo titulo")
+
+.where
+
+Sirve para buscar más de un registro en una tabla. 
+
+				Article.where("title LIKE ?", "%artículo%")
+
+Puede recibir multiples condiciones
+
+				Article.where("title LIKE ? AND body LIKE ?", "%artículo%", "%hola%")
+
+Se sustituye el signo de interrogación por lo que está en las comas
+
+.where.not
+
+Devuelve todos los registros, menos el que cumpla con las condiciones
+
+				Article.where.not("title LIKE ?", "%artículo%")
+
+-----------------------------------------------------------------------------
+
+En el controlador definir el método destroy
+
+						def destroy
+
+						end
+
+En la vista index de articles, modificar el código, agregando un link en cada artículo para poder eliminarlo.
+
+					<% @articles.each do |article| %>
+						<h1><%= article.title %></h1>
+						<div>
+							<%= article.body %> --> <%= link_to "Eliminar", article, method: :delete %>
+						</div>
+					<%end%>
+
+Al hacer clic en el link, Rails nos muestra un error, cambiar el código del método delete para corregirlo.
+
+						def destroy
+							@article = Article.find(params[:id])
+							@article.destroy
+							redirect_to articles_path
+						end
+
+.destroy
+
+Elimina el registro de la base de datos
+
+
+
+
+
+
+
+
+
+
+

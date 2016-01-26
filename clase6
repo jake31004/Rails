@@ -1,0 +1,148 @@
+Layouts
+
+Si vamos a nuestra página principal localhost:3000 veremos que sólo aparece un hola mundo. Pero si vemos el código fuente de nuestra página veremos que tiene vairas etiquetas que nosotros no agregamos.Esto se debe a que rails trabaja con layouts. 
+
+Estos Layouts se encuentran dento de la carpeta app/views/layouts.
+
+En las páginas web, nosotros tenemos varias cosas que se repiten, como la barra de navegación, o los links de los archivos css y js
+
+Para no copiar y pegar este código en todas las páginas, utilizamos un layout. Todo lo que esté escrito en el layout se repetirá en todas las páginas, y para ejecutar el código que va a ser único de cada vista, utilizamos el método yield.
+
+En el layout poner la barra de navegación:
+
+<header>
+	<nav class = "be-red white">
+		<ul class = "no-list row center-xs">
+			<li class="col-md">
+				Inicio
+			</li>
+			<li class="col-md">
+				Ruby Básico
+			</li>
+			<li class="col-md">
+				Ruby Intermedio
+			</li>
+			<li class="col-md">
+				Ruby on Rails
+			</li>
+		</ul>
+	</nav>
+</header>
+
+Para hacer el link de la opción inicio utilizamos el método de Ruby
+			
+				link_to "Nombre_del_link", ruta_a_ligar
+
+Quedando el código anterior de la siguiente forma:
+
+<header>
+	<nav class = "be-red white large-padding">
+		<ul class = "no-list row center-xs">
+			<li class="col-md">
+				<%= link_to "Inicio", root_path %>
+			</li>
+			<li class="col-md">
+				Ruby Básico
+			</li>
+			<li class="col-md">
+				Ruby Intermedio
+			</li>
+			<li class="col-md">
+				Ruby on Rails
+			</li>
+		</ul>
+	</nav>
+</header>
+
+Como Inicio tiene que ir a la página principal, como ruta ponemos la ruta principal, representada con el nombre de:
+
+				root_path
+
+Agregamos el logo de nuestra aplicación web:
+
+<header>
+	<nav class = "be-red white large-padding">
+		<ul class = "no-list row center-xs middle-xs">
+			<li class="col-md">
+				<h1 class="no-margin">Ruby PROTECO</h1>
+			</li >
+			<li class="col-md">
+				<%= link_to "Inicio", root_path %>
+			</li>
+			<li class="col-md">
+				Ruby Básico
+			</li>
+			<li class="col-md">
+				Ruby Intermedio
+			</li>
+			<li class="col-md">
+				Ruby on Rails
+			</li>
+		</ul>
+	</nav>
+</header>
+
+Para que nuestra aplicación se vea mejor, le tenemos que agregar estilo. 
+Creamos un archivo que se llame:
+
+					app/assets/stylesheets/style.scss
+
+Este archivo contendrá:
+
+html,body{
+	margin: 0px;
+}
+
+a,a:visited{
+	color: inherit !important;
+	text-decoration: none;
+}
+
+ul{
+	list-style: none;
+}
+
+.no-margin{
+	margin: 0px;
+}
+
+.be-red{
+	background-color: #E74C3C;
+}
+
+.white{
+	color: #ECF0F1;
+}
+
+.large-padding{
+	padding: 10px 10px;
+}
+
+*Para cambiar la fuente de nuestra página, ir a la página google.com/fonts, en esta página hay varios tipos de letra.
+Seguir las instrucciones y seleccionar la que más nos agrade.
+
+En mi caso utilicé la fuente inconsolata, agregando en el layout el siguiente link:
+
+<link href='https://fonts.googleapis.com/css?family=Inconsolata:700' rel='stylesheet' type='text/css'>
+
+Y en el style.scss:
+
+html,body{
+	margin: 0px;
+	font-family: 'Inconsolata' ;
+}
+
+*En la página color.adobe.com hay paletas de colores para diseñar una página web agradable.
+
+
+
+
+
+
+
+
+
+
+
+
+

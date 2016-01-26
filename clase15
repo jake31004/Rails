@@ -1,0 +1,285 @@
+Autenticación de usuarios 2
+
+Como el código del layout ya está creciendo mucho, podemos pasa la barra de navegación a una vista parcial.
+
+En este caso crearemos la carpeta llamada partials dentro de views
+
+Y dentro de esta carpeta crear el archivo:
+			
+						_navigation.html.erb
+
+En este archivo pegar todo el código de la barra de navegación:
+
+Y mandarlo a llamar en el layout.
+
+Código de app/views/partials/_navigation.html.erb
+
+					<header>
+						<nav class = "be-red white large-padding">
+							<ul class = "no-list row center-xs middle-xs">
+								<li class="col-md">
+									<h1 class="no-margin">Ruby PROTECO</h1>
+								</li >
+								<li class="col-md">
+									<%= link_to "Inicio", root_path %>
+								</li>
+								<li class="col-md">
+									Ruby Básico
+								</li>
+								<li class="col-md">
+									Ruby Intermedio
+								</li>
+								<li class="col-md">
+									Ruby on Rails
+								</li>
+
+								<%if user_signed_in? %>
+									<li class = "col-md">
+										<%= link_to "Cerrar sesión", destroy_user_session_path, method: :delete%>
+									</li>
+								<%end%>
+
+							</ul>
+						</nav>
+					</header>
+
+Código del layout:
+
+					<!DOCTYPE html>
+					<html>
+					<head>
+					  <title>Blog</title>
+					  <link href='https://fonts.googleapis.com/css?family=Inconsolata:700' rel='stylesheet' type='text/css'>
+					  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+					  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+					  <%= csrf_meta_tags %>
+					</head>
+					<body>
+
+					<%= render "partials/navigation" %>
+					<p class="notice"><%= notice %></p>
+					<p class="alert"><%= alert %></p>
+
+					<%= yield %>
+
+					</body>
+					</html>
+
+Agregar los links para poder iniciar sesión o para crear una cuenta en la barra de navegación:
+
+Se agregó un else, por si el usuario no ha iniciado sesión, que aparesca la opción de iniciar sesión y de crear cuenta:
+
+					<%if user_signed_in? %>
+						<li class = "col-md">
+							<%= link_to "Cerrar sesión", destroy_user_session_path, method: :delete%>
+						</li>
+					<%else%>
+						<li class = "col-md">
+							<%= link_to "Iniciar Sesión", new_user_session_path%>
+						</li>
+						<li class = "col-md">
+							<%= link_to "Crear Cuenta" ,new_user_registration_path%>
+						</li>
+					<%end%>
+
+Código completo:
+
+					<header>
+						<nav class = "be-red white large-padding">
+							<ul class = "no-list row center-xs middle-xs">
+								<li class="col-md">
+									<h1 class="no-margin">Ruby PROTECO</h1>
+								</li >
+								<li class="col-md">
+									<%= link_to "Inicio", root_path %>
+								</li>
+								<li class="col-md">
+									Ruby Básico
+								</li>
+								<li class="col-md">
+									Ruby Intermedio
+								</li>
+								<li class="col-md">
+									Ruby on Rails
+								</li>
+
+								<%if user_signed_in? %>
+									<li class = "col-md">
+										<%= link_to "Cerrar sesión", destroy_user_session_path, method: :delete%>
+									</li>
+								<%else%>
+									<li class = "col-md">
+										<%= link_to "Iniciar Sesión", new_user_session_path%>
+									</li>
+									<li class = "col-md">
+										<%= link_to "Crear Cuenta" ,new_user_registration_path%>
+									</li>
+								<%end%>
+
+							</ul>
+						</nav>
+					</header>
+
+Para poder arreglar el estilo de los formularios, tenemos que crear las vistas, esto se logra con el comando:
+
+							rails g devise:views
+
+Todos los archivos que crea este comando se guardan dentro de la carpeta app/views/devise
+
+Ir al archivo app/views/sessions/new.html.erb para editar la vista del formulario para iniciar sesión.
+
+Meter todo el código dentro de tres div
+
+							<div class="row center-xs">
+							  <div class="col-xs-8">
+							    <div class="box text-left">
+
+							    </div>
+							  </div>
+							</div>
+
+Crear el estilo text-left:
+
+							.text-left{
+								text-align: left
+							}
+
+Ponerle a todos los campos de entrada la clase form-control:
+
+					    <%= f.email_field :email, autofocus: true, class: "form-control" %>
+					    <%= f.password_field :password, autocomplete: "off", class: "form-control" %>
+
+Y el boton agregarle la clase be-red, white y btn. Además de alinearlo al centro.
+
+Crear un estilo para la clase actions, que sea:
+
+						.actions{
+							margin-top:1em;
+						}
+
+Código completo de la vista new de User
+
+					<div class="row center-xs">
+					  <div class="col-xs-8">
+					    <div class="box text-left">
+
+					      <h2>Iniciar sesión</h2>
+
+					      <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+					        <div class="field">
+					          <%= f.label :email, "Correo" %><br />
+					          <%= f.email_field :email, autofocus: true, class: "form-control" %>
+					        </div>
+
+					        <div class="field">
+					          <%= f.label :password, "Contraseña"%><br />
+					          <%= f.password_field :password, autocomplete: "off", class: "form-control" %>
+					        </div>
+
+					        <% if devise_mapping.rememberable? -%>
+					          <div class="field" style="text-align:center;">
+					            <%= f.check_box :remember_me %>
+					            <%= f.label :remember_me, "No cerrar sesión" %>
+					          </div>
+					        <% end -%>
+
+					        <div class="actions" style="text-align:center;">
+					          <%= f.submit "Iniciar sesión", class: "btn be-red white"%>
+					        </div>
+					      <% end %>
+
+					      <%= render "devise/shared/links" %>
+
+					    </div>
+					  </div>
+					</div>
+
+Modificar la vista new de registrations
+
+Código de new de registrations:
+
+					<div class="row center-xs">
+					  <div class="col-xs-8">
+					    <div class="box text-left">
+
+
+					        <h2>Registrarse</h2>
+
+					        <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+					          <%= devise_error_messages! %>
+
+					          <div class="field">
+					            <%= f.label :email, "Correo" %><br />
+					            <%= f.email_field :email, autofocus: true, class: "form-control" %>
+					          </div>
+
+					          <div class="field">
+					            <%= f.label :password, "Contraseña" %>
+					            <% if @minimum_password_length %>
+					            <em>(<%= @minimum_password_length %> caracteres mínimo)</em>
+					            <% end %><br />
+					            <%= f.password_field :password, autocomplete: "off", class: "form-control" %>
+					          </div>
+
+					          <div class="field">
+					            <%= f.label :password_confirmation, "Confirmar contraseña" %><br />
+					            <%= f.password_field :password_confirmation, autocomplete: "off", class: "form-control" %>
+					          </div>
+
+					          <div class="actions" style="text-align: center;">
+					            <%= f.submit "Registrar", class: "btn be-red white" %>
+					          </div>
+					        <% end %>
+
+					        <%= render "devise/shared/links" %>
+
+					    </div>
+					  </div>
+					</div>
+
+
+Modificar la vista de welcome/index.html.erb:
+					
+					<% if user_signed_in? %>
+						<h1>Hola <%= current_user.email%></h1>
+					<%else %>
+						<h1>Bienvenido al blog de PROTECO</h1>
+					<%end %>
+
+Modificar la barra de navegación para mostrar todos los links:
+
+					<header>
+						<nav class = "be-red white large-padding">
+							<ul class = "no-list row center-xs middle-xs">
+								<li class="col-md">
+									<h1 class="no-margin">Ruby PROTECO</h1>
+								</li >
+								<li class="col-md">
+									<%= link_to "Inicio", root_path %>
+								</li>
+								<li class="col-md">
+									<%= link_to "Artículos", articles_path%>
+								</li>
+								<li class="col-md">
+									<%= link_to "Crear artículo", new_article_path(@article)%>
+								</li>
+								<li class="col-md">
+									<%= link_to "Vista extra", bienvenido_path %>
+								</li>
+
+								<%if user_signed_in? %>
+									<li class = "col-md">
+										<%= link_to "Cerrar sesión", destroy_user_session_path, method: :delete%>
+									</li>
+								<%else%>
+									<li class = "col-md">
+										<%= link_to "Iniciar Sesión", new_user_session_path%>
+									</li>
+									<li class = "col-md">
+										<%= link_to "Crear Cuenta" ,new_user_registration_path%>
+									</li>
+								<%end%>
+
+							</ul>
+						</nav>
+					</header>

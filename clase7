@@ -1,0 +1,67 @@
+Rutas
+
+Las rutas de nuestra página web se encuentran en el archivo:
+
+		app/config/routes.rb
+
+La ruta que está en el método root, es la ruta principal. En este caso la ruta principal es el controlador welcome con el método index.
+
+		root 'controlador#método'
+
+También podemos acceder a las rutas que empiezan con get poniendo el nombre del dominio y la ruta especificada.
+
+localhost:3000/bienvenido/accion1
+
+Ingresará al controlador bienvenido ejecutando el método accion1
+
+Podemos borrar la línea:
+
+get 'welcome/index'
+
+Porque esa ruta ya está definida en root.
+
+El método get puede recibir la ruta y un hash de opciones donde podemos ingresar el controlador y la accion con la opcion to:
+Agregar esta línea al archivo routes.rb
+
+		get "bienvenido", to: "bienvenido#accion1"
+
+El bloque de código del método draw tiene ahora estás tres líneas:
+
+			Rails.application.routes.draw do
+			  get 'bienvenido/accion1'
+
+			  get "bienvenido", to: "bienvenido#accion1"
+
+			  root 'welcome#index'
+			end
+
+El método resources recibe un símbolo y crea rutas con el nombre de ese símbolo. Crea las siguientes rutas.
+
+			resources :articles
+
+			get "/articles"
+			post "/articles"
+			delete "/articles"
+			get "/articles/:id"
+			get "/articles/new"
+			get "/articles/:id/edit"
+			patch "/articles/:id"
+
+Los recursos no necesariamente necesitan todas esas rutas.
+Podemos mandarle un hash de opciones al metodo resources. 
+La opción:
+
+	only: [:create, :show].-Crea sólo rutas para crear y mostrar 
+
+	except: [:delete].- Crea todas las rutas, excepto la delete
+
+Estas rutas que se crean son para poder utilizar todo el CRUD
+				CREATE, READ, UPDATE DELETE.
+
+La forma de llamar a resources sería:
+
+			resources :nombre, except: [:delete, :update]
+
+
+*******Investigar los verbos de HTTP********
+

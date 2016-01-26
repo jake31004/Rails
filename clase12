@@ -1,0 +1,48 @@
+Strong Params
+
+Para hacer más segura nuestra aplicación cambiar el código de nuestro controlador.
+El método create hay que cambiarlo, porque es vulnerable a ataques.
+
+					def create
+							@article = Article.new(params[:article])
+
+							if @article.save
+								redirect_to @article
+							else
+								render :new
+							end
+
+					end
+
+params[:article] tiene un hash con todos los campos de nuestra tabla
+{title: "Titulo", body: "cuerpo", id:5, visit_count: 34}
+
+Si nosotros dejamos la línea donde estamos creando el objeto Article, no funcionaría a la hora de guardar. Esto sucede porque como le estamos pasando todos los campos o parámetros del registro a nuestra tabla, sin hacer un filtrado, se vuelve muy inseguro nestro código. Ya que alguien podría alterarlo y pasar parámetros que no queremos modificar, como id's incorrectos o visit_count's incorrectos. 
+
+Para solucionar esto debemos de hacer un filtrado de nuestros parámetros, para seleccionar sólo los que queremos modificar.
+
+Crearemos un método privado que realice ese filtrado.
+
+						#Filtrado de parametros para create
+
+						private
+
+						def article_params
+							params.require(:article).permit(:title, :body)
+						end 
+
+Y en el método create llamar al método como argumento de new
+
+						#POST /articles
+						def create
+							@article = Article.new(article_params)
+
+							if @article.save
+								redirect_to @article
+							else
+								render :new
+							end
+
+						end
+
+Con .require llamamos al modelo que vamos a utilizar y con .permit le indicamos que campos de la tabla permitiremos que se modifiquen. En este caso sólo el title y el body se modificaran.

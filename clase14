@@ -1,0 +1,218 @@
+Autenticación de usuarios
+
+Para la autenticación de usuarios, utilizaremos la gema devise.
+
+Agregarla al Gemfile
+
+gem 'devise'
+
+Cerrar el servidor y ejecutar el comando:
+
+					bundle install
+
+device agrega generadores
+
+Para instalar device en nuestra aplicación, ejecutar el comando:
+
+					rails g devise:install
+
+Para generar un modelo de usuarios, ejecutar el comando:
+
+					rails g devise User
+
+Se creara el modelo User
+
+Ir al archivo de la migración que se creó y ver como el código es bastante más complejo que el de la migración del artículo.
+
+Tenemos un email, con el cual el usuario se identificará, una contraseña cifrada, para seguridad.
+
+Tenemos variables también, para que el usuario pueda recuperar su password.
+
+También para saber cuantas veces se a logeado un susuario, en que fechas, etc.
+
+Nosotros también podemos agregar nuestros campos, en este caso aagregaremos un nombre y un nivel de permiso, de la siguiente forma:
+
+						      t.string :name
+						      t.string :permission_level
+
+Código completo:
+
+						class DeviseCreateUsers < ActiveRecord::Migration
+						  def change
+						    create_table(:users) do |t|
+						      ## Database authenticatable
+						      t.string :email,              null: false, default: ""
+						      t.string :encrypted_password, null: false, default: ""
+
+						      ## Recoverable
+						      t.string   :reset_password_token
+						      t.datetime :reset_password_sent_at
+
+						      ## Rememberable
+						      t.datetime :remember_created_at
+
+						      ## Trackable
+						      t.integer  :sign_in_count, default: 0, null: false
+						      t.datetime :current_sign_in_at
+						      t.datetime :last_sign_in_at
+						      t.string   :current_sign_in_ip
+						      t.string   :last_sign_in_ip
+
+						      ## Confirmable
+						      # t.string   :confirmation_token
+						      # t.datetime :confirmed_at
+						      # t.datetime :confirmation_sent_at
+						      # t.string   :unconfirmed_email # Only if using reconfirmable
+
+						      ## Lockable
+						      # t.integer  :failed_attempts, default: 0, null: false # Only if lock strategy is :failed_attempts
+						      # t.string   :unlock_token # Only if unlock strategy is :email or :both
+						      # t.datetime :locked_at
+
+						      t.string :name
+						      t.string :permission_level
+
+						      t.timestamps null: false
+						    end
+
+						    add_index :users, :email,                unique: true
+						    add_index :users, :reset_password_token, unique: true
+						    # add_index :users, :confirmation_token,   unique: true
+						    # add_index :users, :unlock_token,         unique: true
+						  end
+						end						 
+
+
+Ejecutamos la migración con:
+
+							rake db:migrate
+
+Otra cosa que devise generó fue una ruta en el archivo routes:
+
+							devise_for :users
+
+Esta ruta nos genera un formulario en la ruta:
+
+							localhost:3000/users/sign_in
+
+Ademas de crear otras rutas útiles para el manejo de usuarios.
+
+En el layout escribir las siguientes líneas, para poder mostrar mensajes de error y otros.
+
+							<p class="notice"><%= notice %></p>
+							<p class="alert"><%= alert %></p>
+
+Código completo del layout:
+
+					<!DOCTYPE html>
+					<html>
+					<head>
+					  <title>Blog</title>
+					  <link href='https://fonts.googleapis.com/css?family=Inconsolata:700' rel='stylesheet' type='text/css'>
+					  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+					  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+					  <%= csrf_meta_tags %>
+					</head>
+					<body>
+
+					<header>
+						<nav class = "be-red white large-padding">
+							<ul class = "no-list row center-xs middle-xs">
+								<li class="col-md">
+									<h1 class="no-margin">Ruby PROTECO</h1>
+								</li >
+								<li class="col-md">
+									<%= link_to "Inicio", root_path %>
+								</li>
+								<li class="col-md">
+									Ruby Básico
+								</li>
+								<li class="col-md">
+									Ruby Intermedio
+								</li>
+								<li class="col-md">
+									Ruby on Rails
+								</li>
+							</ul>
+						</nav>
+					</header>
+
+					<p class="notice"><%= notice %></p>
+					<p class="alert"><%= alert %></p>
+
+					<%= yield %>
+
+					</body>
+					</html>
+
+Ingresar un correo y una contraseña y dar clic en login y ver el mensaje de error.
+
+Después dar clic en sing up para registrar a un usuario y al registrarlo el formulario automáticamente nos redirige a nuestra página principal.
+
+Devise nos provee de métodos útiles, como el que se escribe a continuación
+
+					modelo_signed_in?
+
+Nos regresa un booleano para saber si el usuario ya inició sesión o no.
+
+Modificar el código del layout para mostrar un link de cerrar sesión, cuando el usuario ya haya iniciado sesión:
+
+Se agregó este if, a la lista del navbar:
+
+					<%if user_signed_in? %>
+						<li class = "col-md">
+							<%= link_to "Cerrar sesión", destroy_user_session_path, method: :delete%>
+						</li>
+					<%end%>
+
+Código completo:
+
+				<!DOCTYPE html>
+				<html>
+				<head>
+				  <title>Blog</title>
+				  <link href='https://fonts.googleapis.com/css?family=Inconsolata:700' rel='stylesheet' type='text/css'>
+				  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+				  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+				  <%= csrf_meta_tags %>
+				</head>
+				<body>
+
+				<header>
+					<nav class = "be-red white large-padding">
+						<ul class = "no-list row center-xs middle-xs">
+							<li class="col-md">
+								<h1 class="no-margin">Ruby PROTECO</h1>
+							</li >
+							<li class="col-md">
+								<%= link_to "Inicio", root_path %>
+							</li>
+							<li class="col-md">
+								Ruby Básico
+							</li>
+							<li class="col-md">
+								Ruby Intermedio
+							</li>
+							<li class="col-md">
+								Ruby on Rails
+							</li>
+
+							<%if user_signed_in? %>
+								<li class = "col-md">
+									<%= link_to "Cerrar sesión", destroy_user_session_path, method: :delete%>
+								</li>
+							<%end%>
+
+						</ul>
+					</nav>
+				</header>
+
+				<p class="notice"><%= notice %></p>
+				<p class="alert"><%= alert %></p>
+
+				<%= yield %>
+
+				</body>
+				</html>
+
+

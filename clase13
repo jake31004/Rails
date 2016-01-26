@@ -1,0 +1,229 @@
+
+Vistas parciales
+
+Son vistas parciales que se repiten en muchas vistas.
+
+La diferencia entre las vistas parciales y los layouts, es que el layout se repite en TODAS las vistas, las parciales sólo se repiten en algunas vistas que nosotros indiquemos.
+
+Para editar nuestro artículo, debemos de definir el método edit en el controlador
+
+							def edit
+							end
+
+Edit necesita el id para saber que artículo vamos a editar, podemos utilizar el método find
+
+							def edit
+								@article = Article.find(params[:id])
+							end
+
+Ahora necesitamos crear la vista para editar un artículo:
+La vista se llamará app/views/articles/edit.html.erb
+
+-Copiar todo el código de la vista new en la vista edit, cambiar el título a Editar Artículo
+
+							<div style="width:80%; margin:0 auto;">
+
+								<h1>Editar Artículo</h1>
+
+								<%= form_for(@article) do |f| %>
+								<% @article.errors.full_messages.each do |message| %>
+									<div class = "be-red white top-space">
+										<%= message %>
+									</div>
+								<%end%>
+								
+									<div class = "field">
+										<%= f.text_field :title, placeholder: "Título" , class: "form-control"%>
+									</div>
+									<div>
+										<%= f.text_area :body, placeholder: "Escribe aquí", style: "height: 250px;", class: "form-control" %>
+									</div>
+
+									<div class="field">
+										<%= f.submit "Guardar", class: "btn be-red white" %>
+									</div>
+								<% end %>
+							</div>
+
+Si actualizamos la vista edit, veremos que se autocompletan los campos del formulario, esto debido a que el método form_for recibe como argumento el artículo. En new, el artículo que se le enviava al form_for era un artículo vacío y en edit se le manda un artículo ya con los datos.
+
+Si nos damos cuenta, copiamos todo el código de new a edit, estamos repitiendo código, eso es de cierta incorrecto, así que utilizaremos una vista parcial.
+
+Crear un nuevo archivo llamado app/views/article/_form.html.erb 
+
+Las vistas parciales comienzan con un guión bajo.
+
+Dentro de la vista parcial, pegar el código del formulario y quitar ese código de la vista new y de la vista edit
+
+Archivo _form.html.erb
+
+			<%= form_for(@article) do |f| %>
+				<% @article.errors.full_messages.each do |message| %>
+					<div class = "be-red white top-space">
+						<%= message %>
+					</div>
+				<%end%>
+				
+				<div class = "field">
+					<%= f.text_field :title, placeholder: "Título" , class: "form-control"%>
+				</div>
+				
+				<div>
+					<%= f.text_area :body, placeholder: "Escribe aquí", style: "height: 250px;", class: "form-control" %>
+				</div>
+
+				<div class="field">
+					<%= f.submit "Guardar", class: "btn be-red white" %>
+				</div>
+			<% end %>
+
+Para llamar el código de la vista parcial utilizamos el método render
+
+Archivo edit.html.erb
+
+				<div style="width:80%; margin:0 auto;">
+
+					<h1>Editar Artículo</h1>
+
+					<%= render "form" %>
+
+				</div>
+
+Archivo new.html.erb
+
+				<div style="width:80%; margin:0 auto;">
+
+					<h1>Crear Artículo</h1>
+
+					<%= render "form" %>
+
+				</div>
+
+Render recibe la dirección de la vista a la que va a llamar, notese que el nombre del archivo se llama sin el guión bajo.
+
+A render también le podemos pasar variables en forma de hash.
+
+Modificar el código para que la vista parcial también cambie el título de nuestra vista.
+
+A la vista parcial se le agregó la línea:
+
+				<h1><%= name %> Artículo</h1>
+
+Y esa variable name se le pasa al render como Hash:
+
+Archivo edit.html.erb:
+
+					<div style="width:80%; margin:0 auto;">
+						<%= render "form" , name: "Editar"%>
+					</div>
+
+Archivo new.html.erb:
+
+					<div style="width:80%; margin:0 auto;">
+						<%= render "form" , name: "Crear"%>
+					</div>
+
+Vista parcial:
+
+					<h1><%= name %> Artículo</h1>
+
+					<%= form_for(@article) do |f| %>
+						<% @article.errors.full_messages.each do |message| %>
+							<div class = "be-red white top-space">
+								<%= message %>
+							</div>
+						<%end%>
+						
+						<div class = "field">
+							<%= f.text_field :title, placeholder: "Título" , class: "form-control"%>
+						</div>
+						
+						<div>
+							<%= f.text_area :body, placeholder: "Escribe aquí", style: "height: 250px;", class: "form-control" %>
+						</div>
+
+						<div class="field">
+							<%= f.submit "Guardar", class: "btn be-red white" %>
+						</div>
+					<% end %>
+
+Ahora, cuando estamos en la vista edit, si le damos clic en guardar, nos manda el error de que nos hace falta el método update.
+
+Crear el método update dentro del controlador:
+
+					def update
+						@article = Article.find(params[:id])
+						if @article.update(article_params)
+							redirect_to @article
+						else
+							render :edit
+						end
+					end
+
+Si el artículo se pudo actualizar, entonces redirigeme a él, si no, vuelve a cargar el método edit.
+
+-Modificar la vista index de articles:
+
+				<h1><%= link_to article.title, article %></h1>
+
+Se crea un link, para poder acceder a los artículos.
+
+Dentro del artículo pondremos un link para poder editar ese artículo, modificaremos la vista de show de la siguiente forma:
+
+				<h1><%= @article.title %></h1>
+				<div>
+					<%= @article.body %>
+				</div>
+
+				<div>
+					<%= link_to "Editar", edit_article_path(@article)%>
+				</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+							

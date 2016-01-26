@@ -1,0 +1,117 @@
+Controladores
+
+Si tratamos de acceder a la ruta que creamos con references :article.
+De la siguiente forma:
+
+		localhost:3000/articles
+
+Nos muestra un error.
+
+Este error sucede porque no tenemos un controlador que reciba las peticiones para este recurso.
+
+Necesitamos crear un controlador, para esto crear un nuevo archivo que se llame:
+
+			app/controllers/articles_controller.rb
+
+Poner dentro de este archivo el controlador que nos pide el error, en este caso ArticlesController y que este controlador herede de ApplicationController.
+
+			class ArticlesController < ApplicationController
+
+			end
+
+Recargar la página y saldrá otro error, en este caso nos pide la acción index. Esto porque cada ruta que creamos con resources tiene una acción o método asociado.
+
+			get "/articles"  -----> index
+			post "/articles"  -----> create
+			delete "/articles"  -----> delete
+			get "/articles/:id"  -----> show
+			get "/articles/new"  -----> new
+			get "/articles/:id/edit" -----> edit
+			patch "/articles/:id" -----> update
+			put "/articles/:id"  -----> update
+
+Ahora sale un error distinto, porque no encuentra el template o la vista que mostrará este controlador.
+Primero crearemos una carpeta dentro de la carpeta views llamada articles.
+Crearemos una vista llamada index.html.erb dentro de la carpeta articles.
+
+Al recargar la página ya no mostrará error.
+
+Como ya tenemos el modelo de articles, podemos utilizarlo.
+
+El método .all de un modelo nos devuelve todos los elementos de la tabla de ese modelo.
+
+Para que la misma variable pueda ser utilizada en el controlador y en la vista, las creamos como variables de instancia (Con un arroba). Estas variables de instancia serán las mismas en el controlador como en la vista.
+
+Modificar el código de articles_controller.rb de la siguiente forma:
+
+			class ArticlesController < ApplicationController
+				
+				#GET /articles
+				#Lista de todos los artículos
+				def index
+					@articles = Article.all
+				end
+			end
+
+Y el código de la vista index de articles /views/articles/index.html
+
+			<% @articles.each do |article| %>
+				<h1><%= article.title %></h1>
+				<p><%= article.body %></p> 
+			<%end%>
+
+Este código mostrará el título y el cuerpo de todos los artículos.
+
+Ir a la consola de Ruby y crear dos artículos, de la siguiente forma:
+
+	-Ir a la carpeta de la aplicación
+	-Escribir el comando:
+			rails console
+	-Escribir el comando:
+		
+			Article.create title: "Primer Artículo", body: "Me gusta programar en Ruby"
+
+		El método create de un modelo, recibe el Hash con los valores de cada uno de los campos de la tabla.
+
+Crear otro artículo de la misma manera y actualizar la ruta index de articles.
+
+Para mostrar un solo artículo en una vista, utilizamos la ruta 	
+						
+						/articles/:id
+
+Esta ruta recibe el id del artículo que queremos mostrar. Utiliza el método show, entonces debemos crear el método show en el controlador:
+
+				class ArticlesController < ApplicationController
+					
+					#GET /articles
+					#Lista de todos los artículos
+					def index
+						@articles = Article.all
+					end
+
+					#GET /articles/:id
+					#Muestra el artículo que queremos ver, pasando el id
+					def show
+						@article = Article.find(params[:id])
+					end
+				end
+
+params es un Hash con todos los parámetros que se mandaron al servidor web, en este caso el id del artículo.
+
+También debemos crear la vista para este metodo show, el archivo se llamará:
+
+				views/articles/show.html.erb
+
+Y dentro de esta vista pondremos el siguiente código:
+
+				<h1><%= @article.title %></h1>
+				<div>
+					<%= @article.body %>
+				</div>
+
+En esta vista mostramos el titulo y el cuerpo del artículo.
+
+Poner la ruta de cada artículo para ver que funcione con los dos artículos que creamos anteriormente.
+
+
+
