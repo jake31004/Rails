@@ -1,8 +1,12 @@
 Rails.application.routes.draw do
+  resources :comments
+
+  devise_for :users
   get 'bienvenido/accion1'
 
-  get 'welcome/index'
+  get "bienvenido", to: "bienvenido#accion1"
 
+  resources :articles
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

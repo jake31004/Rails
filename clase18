@@ -1,0 +1,37 @@
+scaffold
+
+Nos permite generar un CRUD con sus vistas, su controlador, el modelo y las migraciones.
+
+Todo lo que vimos anteriormente lo podemos hacer con el comando scaffold.
+
+Generaremos la sección para los comentarios de cada artículo:
+
+rails generate scaffold Comment user:references article:references body:text
+
+El primer atributo que se le pasa al scaffold es el nombre del controlador, con la primera letra mayúscula, en sigular y en inglés. Después los campos de nuestro modelo.
+
+En las rutas se crea el resources :comments
+
+Se crea una migración para generar la tabla
+
+Tenemos un controlador para los comentarios
+
+Y tenemos todas las vistas para los comentarios
+
+Ejecutar la migración para crear la tabla de los comentarios:
+
+					rake db:migrate
+
+Si vamos al modelo de comments veremos que las relaciones ya están hechas.
+
+Ir a la ruta comments y tendremos una lista de los comentarios que tenemos.
+
+Dar clic en new y crear un comentario pasando el id del usuario y el id del artículo.
+
+En commets ya aparecerá en la lista de comentarios
+
+Podemos seleccionar el comentario y editarlo.
+
+Podemos también eliminarlo.
+
+El scaffold genera una hoja de estilos que nos puede agradar o no. En este caso la eliminaremos para mantener nuestro propio estilo.

@@ -1,0 +1,123 @@
+Asociaciones
+
+En esta clase, asociaremos los artículos para que los usuarios puedan crearlos.
+
+Para generar la asociación entre los usuarios y los artículos, podemos ejecutar el siguient comando:
+
+rails generate migration add_user_id_to_articles user:references
+
+Este comando creará una migración donde enlazaremos la tabla de Article con la tabla de User.
+
+Ir al schema de la base de datos y veremos que en la tabla articles, se crea un campo de tipo entero llamado: user_id
+
+Este campo nos servira para saber a que usuario pertenece un artículo.
+
+Si vamos a la consola, y creamos un nuevo artículo, veremos que ya hay un campo llamado user_id.
+
+Modificar el modelo de Article con la siguiente línea para mostrar al usuario:
+
+						belongs_to :user
+
+Código completo:
+
+						class Article < ActiveRecord::Base
+							belongs_to :user
+							validates :title, presence: true,  uniqueness: true
+							validates :body, presence: true, length: {minimum: 20}
+						end
+
+Y modificar el modelo User con la línea:
+
+						has_many :articles
+
+Código completo:
+
+						class User < ActiveRecord::Base
+						  # Include default devise modules. Others available are:
+						  # :confirmable, :lockable, :timeoutable and :omniauthable
+						  devise :database_authenticatable, :registerable,
+						         :recoverable, :rememberable, :trackable, :validatable
+
+						  has_many :articles
+						end
+
+El belongs_to nos indica que el artículo pertenece a un usuario
+El has_many nos indica que un usuario tiene muchos artículos
+
+Reiniciar la consola para que lea los cambios que hemos realizado
+
+Ejecutar el comando:
+
+					Article.last.user
+
+Y nos devolverá un nil, porque el último artículo creado no tiene un usuario. Pero no manda error, porque el campo sí existe.
+
+Ir a articles_controller y modificar el código del método create:
+
+					def create
+						@article = current_user.articles.new(article_params)
+
+						if @article.save
+							redirect_to @article
+						else
+							render :new
+						end
+
+					end
+
+current_user es el usuario actual, estamos llamando a artículos y después llamando el método new para crear un artículo.
+
+Este artículo ya estará relacionado con el usuario actual.
+
+Ir a la aplicación e iniciar sesión, crear un artículo ya con la sesión iniciada.
+
+Ir a la consola y ejecutar el comando:
+
+						Article.last.user
+
+Y ya nos devolverá la información del usuario que creó el último artículo.
+
+Cambiar la vista show de articles para mostrar el usuario:
+
+					<h1><%= @article.title %></h1>
+					<p>
+						Escrito por: <%= @article.user.email %>
+					</p>
+					<div>
+						<%= @article.body %>
+					</div>
+
+					<div>
+						<%= link_to "Editar", edit_article_path(@article)%>
+						<%= link_to "Regresar", articles_path%>
+					</div>
+
+Si le damos clic al último artículo creado, se muestra en la vista el correo del usuario que creó el artículo, pero si le damos clic a uno que no creamos con un usuario nos muestra error, porque no hay usuario para ese artículo.
+
+Modificar el código para que se muestre si existe un usuario:
+
+					<h1><%= @article.title %></h1>
+
+					<%unless @article.user.nil? %>
+					<p>
+						Escrito por: <%= @article.user.email %>
+					</p>
+					<%end%>
+
+					<div>
+						<%= @article.body %>
+					</div>
+
+					<div>
+						<%= link_to "Editar", edit_article_path(@article)%>
+						<%= link_to "Regresar", articles_path%>
+					</div>
+
+Este código nos lanzará un error si cerramos sesión e intentamos crear un nuevo artículo, porque no podría asociar al usuario actual con el artículo creado.
+
+
+
+
+
+
+

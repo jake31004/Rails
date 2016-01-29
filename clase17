@@ -1,0 +1,158 @@
+callbacks
+
+Para solucionar el problema de que no podemos crear artículos si no hemos iniciado sesión, utilizaremos un callback.
+
+Poner dentro del controlador de article la línea:
+
+			before_action :authenticate_user!, except: [:show, :index]
+
+Esta línea dice que antes de todos los métodos, excepto el de show y el de index, el usuario debe iniciar sesión
+
+También podemos mandar la opción only: y pasarle el arreglo con las opciones que queremos que permita
+
+			before_action :authenticate_user!, only: [:show, :index]
+
+También para evitar repetir código dentro de nuestro controlador, podermos cambiar su código con un callback
+
+				class ArticlesController < ApplicationController
+					before_action :authenticate_user!, except: [:show, :index] 
+					before_action :set_article, except: [:index, :new, :create]
+					#GET /articles
+					#Lista de todos los artículos
+					def index
+						@articles = Article.all
+					end
+
+					#GET /articles/:id
+					#Muestra el artículo que queremos ver, pasando el id
+					def show
+						
+					end
+
+					#GET /articles/new
+					#Creamos un artículo
+					def new
+						@article = Article.new
+					end
+
+					#POST /articles
+					def create
+						@article = current_user.articles.new(article_params)
+
+						if @article.save
+							redirect_to @article
+						else
+							render :new
+						end
+
+					end
+
+					def destroy
+
+						@article.destroy
+						redirect_to articles_path
+					end
+
+					#GET /articles/:id/edit
+					def edit
+						
+					end
+
+					
+					def update
+						
+						if @article.update(article_params)
+							redirect_to @article
+						else
+							render :edit
+						end
+					end
+
+					#Filtrado de parametros para create
+
+					private
+
+					def set_article
+						@article = Article.find(params[:id])
+					end
+
+					def article_params
+						params.require(:article).permit(:title, :body)
+					end 
+
+				end
+
+Se agregó un método privado llamado set_article y este método busca el artículo con el id que se le pase.
+
+Esa línea se le borró a todos los métodos que la utilizaban y en un callback se ejecuta el método que busca el artículo. Para que no repitamos esa línea en todos los métodos.
+
+Dentro del modelo de Article cambiar el código a este:
+
+				class Article < ActiveRecord::Base
+					belongs_to :user
+					validates :title, presence: true,  uniqueness: true
+					validates :body, presence: true, length: {minimum: 20}
+
+					before_create :set_visits_count
+
+					private
+
+					def set_visits_count
+						self.visit_count = 0
+					end
+				end
+
+Para que al crear un artículo pongamos que tiene cero visitas.
+
+Crear un nuevo artículo y ver que tiene cero visitas en la consola, con 
+
+				Article.last.visit_count
+
+Ejecutar el siguiente comando, para ver que el primer artículo no devuelve cero en su visit_count:
+
+				Article.first.visit_count
+
+Y en el método show del controlador actualizar el visit_count para que aumente en uno, con el siguiente código:
+
+Código en el controlador:
+
+				def show
+						@article.update_visit_count
+				end
+
+Código en el modelo:
+
+				def update_visit_count
+					self.update(visit_count: self.visit_count + 1)
+				end
+
+				private
+
+				def set_visits_count
+					self.visit_count = 0
+				end
+
+Código de la vista show de article:
+
+				<h1><%= @article.title %></h1>
+
+				<%unless @article.user.nil? %>
+				<p>
+					Escrito por: <%= @article.user.email %>
+				</p>
+				<%end%>
+
+				<p>
+					Número de visitas: <%= @article.visit_count %>
+				</p>
+
+				<div>
+					<%= @article.body %>
+				</div>
+
+				<div>
+					<%= link_to "Editar", edit_article_path(@article)%>
+					<%= link_to "Regresar", articles_path%>
+				</div>
+
+Eliminar todos los artículos que no tienen un visit_count asignado para evitar problemas.
